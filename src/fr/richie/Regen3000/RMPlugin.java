@@ -298,6 +298,8 @@ public class RMPlugin extends JavaPlugin{
 					getHistoryFile().set(historyNode+".nextRegen", -1);
 					getHistoryFile().set(historyNode+".period", null);
 					
+					saveHistoryFile();
+					
 					p.sendMessage(ChatColor.GREEN + "Le regen auto a été désactivé pour la mine '"+args[1]+"'");
 					
 					return true;
