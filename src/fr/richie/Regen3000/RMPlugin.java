@@ -429,6 +429,7 @@ public class RMPlugin extends JavaPlugin{
 	private void sendCommands(Player p, String cmd) {
 		sendMainCommand(p, cmd);
 		p.sendMessage(ChatColor.RED + cmd + " reset <region_name> {permet d'annuler un regen périodique}");
+		p.sendMessage(ChatColor.RED + cmd + " redo <region_name> {permet de refaire un regen avec les derniers params}");
 		p.sendMessage(ChatColor.RED + cmd + " start {démarre la dernière commande de regen}");
 		p.sendMessage(ChatColor.RED + cmd + " cancel {annule la dernière commande de regen}");
 	}
