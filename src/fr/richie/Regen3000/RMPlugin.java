@@ -254,6 +254,8 @@ public class RMPlugin extends JavaPlugin{
 							if(periodInMinutes != null && periodInMinutes < 5){
 								p.sendMessage(ChatColor.RED + "La période doit durer 5 minutes minimum.");
 								return true;
+							}else{
+								period = arg_period;
 							}
 							
 						} catch (Exception e1) {
@@ -316,6 +318,7 @@ public class RMPlugin extends JavaPlugin{
 
 					action.sendRecap(cmd);
 					
+					return true;
 				}
 				
 				if(args[0].toLowerCase().startsWith("sta")){
@@ -388,7 +391,7 @@ public class RMPlugin extends JavaPlugin{
 		
 		RegionLoader loadedRegion = null;
 		try{
-			loadedRegion = RegionLoader.loadRegion(this, p, p.getWorld(), regionName);
+			loadedRegion = RegionLoader.loadRegion(this, p, world, regionName);
 		}catch(Exception ex){
 			if(p != null)
 				p.sendMessage(ChatColor.RED + "Erreur : "+ex.getMessage());
@@ -396,7 +399,7 @@ public class RMPlugin extends JavaPlugin{
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[GRAVE][Regen3000] Erreur lors du régen auto de la mine '"+regionName+"' : "+ex.getMessage());
 		}
 		
-		RMAction action = new RMAction(this, loadedRegion, p, p.getWorld(), wallBlockMaterial, period, ydiff, nolava, bcast);
+		RMAction action = new RMAction(this, loadedRegion, p, world, wallBlockMaterial, period, ydiff, nolava, bcast);
 		
 		return action;
 	}
@@ -559,7 +562,7 @@ public class RMPlugin extends JavaPlugin{
 						
 					}else if(nextRegen != -1 && nextRegen <= (thisTime+5*60*1000) && finished){
 						
-						 double remainingTime = (thisTime+5*60*1000) - nextRegen;
+						 double remainingTime = (nextRegen-thisTime)/1000;
 						 
 						 long nbMin = Math.round(Math.ceil(remainingTime/60D));
 						 

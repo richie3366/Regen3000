@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.regions.Region;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -41,8 +40,6 @@ public class RMAction {
 	public boolean stopped = false;
 	public boolean finished = false;
 	
-	public EditSession es;
-
 	public Material wallBlockMaterial;
 	
 	public int runningTask = -1;
@@ -62,13 +59,13 @@ public class RMAction {
 	private RegionLoader loadedRegion;
 	
 	public RMAction(RMPlugin plugin, RegionLoader loadedRegion, Player player,
-			World wsource, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
+			World wdest, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
 		this.plugin = plugin;
 		this.region = loadedRegion.WGregion;
 		this.loadedRegion = loadedRegion;
 		this.player = player;
-		this.wsource = wsource;
-		this.wdest = player.getWorld();
+		//this.wsource = wsource;
+		this.wdest = wdest;
 		this.chunkMin = loadedRegion.chunkMin;
 		this.chunkMax = loadedRegion.chunkMax;
 		this.minPoint = loadedRegion.realMinPoint;
@@ -81,10 +78,9 @@ public class RMAction {
 		this.period = period;
 		
 		this.wallBlockMaterial = wallBlockMaterial;
-		
-		this.es = plugin.worldEdit.createEditSession(player);
-		
-		plugin.actionList.put(player.getName(), this);
+				
+		if(player != null)
+			plugin.actionList.put(player.getName(), this);
 		
 	}
 	
@@ -103,7 +99,7 @@ public class RMAction {
 			}
 		}
 		
-		historyNode = "regens."+wsource.getName()+"."+region.getId();
+		historyNode = "regens."+wdest.getName()+"."+region.getId();
 		
 		saveToHistoryFile();
 		
@@ -132,7 +128,7 @@ public class RMAction {
 	
 	private void saveToHistoryFile() {
 
-		plugin.getHistoryFile().set(historyNode+".playerName", player.getName());
+		if(player != null) plugin.getHistoryFile().set(historyNode+".playerName", player.getName());
 		plugin.getHistoryFile().set(historyNode+".period", period);
 		plugin.getHistoryFile().set(historyNode+".nextRegen", nextRegen);
 		plugin.getHistoryFile().set(historyNode+".wallID", wallBlockMaterial.getId());
@@ -176,6 +172,7 @@ public class RMAction {
 		
 		saveToHistoryFile();
 		
+		if(player != null)
 		plugin.actionList.remove(player.getName());
 		
 		
@@ -204,7 +201,7 @@ public class RMAction {
 	
 	public void sendMessage(String message){
 		
-		if(bcast){
+		if(bcast || player == null){
 			Bukkit.broadcastMessage(message);
 		}else{
 			player.sendMessage(message);
