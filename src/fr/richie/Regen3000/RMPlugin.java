@@ -300,6 +300,7 @@ public class RMPlugin extends JavaPlugin{
 					
 					p.sendMessage(ChatColor.GREEN + "Le regen auto a été désactivé pour la mine '"+args[1]+"'");
 					
+					return true;
 				}
 				if(args[0].toLowerCase().startsWith("redo")){
 					
