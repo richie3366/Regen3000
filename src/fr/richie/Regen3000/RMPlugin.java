@@ -24,8 +24,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import fr.richie.Regen3000.RMUtils.Period;
-
 public class RMPlugin extends JavaPlugin{
 	
 	
@@ -136,7 +134,7 @@ public class RMPlugin extends JavaPlugin{
 								arg_ydiff = split[1];
 							}else if(argname.equals("nolava")){
 								arg_nolava = split[1];
-							}else if(argname.equals("period")){
+							}else if(argname.startsWith("period")){
 								arg_period = split[1];
 							}else if(argname.endsWith("cast") || argname.equals("bc")){
 								arg_bcast = split[1];
@@ -211,22 +209,29 @@ public class RMPlugin extends JavaPlugin{
 						}
 					}
 					
-					Period per = null;
+					String period = null;
+					Long periodInMinutes = null;
 					// TODO : archivage dernier regen même si pas periode, possibilité de redo sans param
-					// TODO : supprimer l'objet period, faire le cron min-by-min, etc..
+					// TODO : faire le cron min-by-min
 					// TODO : faire l'archivage A LA FIN ou mettre une variable started/finished dans le node
 					
 					if(arg_period != null){
 						
 						try {
-							per = Period.valueOf(arg_period);
+							periodInMinutes = RMUtils.getNbMinutesFromTime(arg_period);
+							
+							if(periodInMinutes != null && periodInMinutes < 5){
+								p.sendMessage(ChatColor.RED + "La période doit durer 5 minutes minimum.");
+								return true;
+							}
+							
 						} catch (Exception e1) {
 							
 							p.sendMessage(ChatColor.RED + "Valeur period incorrecte : ["+e1.getMessage()+"]");
 							return true;
 						}
-						
 					}
+					
 					
 					
 					ProtectedRegion region = this.worldGuard.getRegionManager(p.getWorld()).getRegion(args[1]);
@@ -299,7 +304,7 @@ public class RMPlugin extends JavaPlugin{
 					BlockVector2D chunkMax = new BlockVector2D(xMax >> 4, zMax >> 4);
 
 
-					RMAction action = new RMAction(this, region, laregion, p, p.getWorld(), chunkMin, chunkMax, realMinPoint, realMaxPoint, wallBlockMaterial, per, ydiff, nolava, bcast);
+					RMAction action = new RMAction(this, region, laregion, p, p.getWorld(), chunkMin, chunkMax, realMinPoint, realMaxPoint, wallBlockMaterial, period, ydiff, nolava, bcast);
 					
 					String complement = "sans mettre de murs autour.";
 					

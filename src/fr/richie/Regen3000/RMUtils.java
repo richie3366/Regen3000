@@ -2,6 +2,8 @@ package fr.richie.Regen3000;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -167,10 +169,152 @@ public class RMUtils {
 		}
 	}
 
-	@Deprecated
-	public static long parseDateDiff(String time, boolean future) throws Exception
+	public static long getNbMinutesFromTime(String str) throws Exception{
+		Pattern timePattern = Pattern.compile("(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?(?:([0-9]+)\\s*h[a-z]*[,\\s]*)?(?:([0-9]+)\\s*m[a-z]*[,\\s]*)?(?:([0-9]+)\\s*(?:s[a-z]*)?)?", 2);
+
+		Matcher m = timePattern.matcher(str);
+		int years = 0;
+		int months = 0;
+		int weeks = 0;
+		int days = 0;
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		boolean found = false;
+		while (m.find())
+		{
+			if ((m.group() == null) || (m.group().isEmpty()))
+			{
+				continue;
+			}
+			for (int i = 0; i < m.groupCount(); i++)
+			{
+				if ((m.group(i) == null) || (m.group(i).isEmpty()))
+					continue;
+				found = true;
+				break;
+			}
+
+			if (!found)
+				continue;
+			if ((m.group(1) != null) && (!m.group(1).isEmpty()))
+			{
+				years = Integer.parseInt(m.group(1));
+			}
+			if ((m.group(2) != null) && (!m.group(2).isEmpty()))
+			{
+				months = Integer.parseInt(m.group(2));
+			}
+			if ((m.group(3) != null) && (!m.group(3).isEmpty()))
+			{
+				weeks = Integer.parseInt(m.group(3));
+			}
+			if ((m.group(4) != null) && (!m.group(4).isEmpty()))
+			{
+				days = Integer.parseInt(m.group(4));
+			}
+			if ((m.group(5) != null) && (!m.group(5).isEmpty()))
+			{
+				hours = Integer.parseInt(m.group(5));
+			}
+			if ((m.group(6) != null) && (!m.group(6).isEmpty()))
+			{
+				minutes = Integer.parseInt(m.group(6));
+			}
+			if ((m.group(7) == null) || (m.group(7).isEmpty()))
+				break;
+			seconds = Integer.parseInt(m.group(7));
+		}
+
+		if (!found)
+		{
+			throw new Exception("Format incorrect");
+		}
+
+		if(seconds > 0){
+			throw new Exception("Secondes interdites");
+		}
+
+		if(years > 0){
+			throw new Exception("Années interdites");
+		}			
+
+		if(months > 0){
+			throw new Exception("Mois interdits");
+		}
+
+		int nbMinutes = (weeks*7+days)*24*60+hours*60+minutes;
+
+		return nbMinutes;
+
+	}
+
+	public static long getFutureTime(String time) throws Exception
 	{
-		/*
+		boolean future = true;
+
+		Pattern timePattern = Pattern.compile("(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?(?:([0-9]+)\\s*h[a-z]*[,\\s]*)?(?:([0-9]+)\\s*m[a-z]*[,\\s]*)?(?:([0-9]+)\\s*(?:s[a-z]*)?)?", 2);
+
+		Matcher m = timePattern.matcher(time);
+		int years = 0;
+		int months = 0;
+		int weeks = 0;
+		int days = 0;
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		boolean found = false;
+		while (m.find())
+		{
+			if ((m.group() == null) || (m.group().isEmpty()))
+			{
+				continue;
+			}
+			for (int i = 0; i < m.groupCount(); i++)
+			{
+				if ((m.group(i) == null) || (m.group(i).isEmpty()))
+					continue;
+				found = true;
+				break;
+			}
+
+			if (!found)
+				continue;
+			if ((m.group(1) != null) && (!m.group(1).isEmpty()))
+			{
+				years = Integer.parseInt(m.group(1));
+			}
+			if ((m.group(2) != null) && (!m.group(2).isEmpty()))
+			{
+				months = Integer.parseInt(m.group(2));
+			}
+			if ((m.group(3) != null) && (!m.group(3).isEmpty()))
+			{
+				weeks = Integer.parseInt(m.group(3));
+			}
+			if ((m.group(4) != null) && (!m.group(4).isEmpty()))
+			{
+				days = Integer.parseInt(m.group(4));
+			}
+			if ((m.group(5) != null) && (!m.group(5).isEmpty()))
+			{
+				hours = Integer.parseInt(m.group(5));
+			}
+			if ((m.group(6) != null) && (!m.group(6).isEmpty()))
+			{
+				minutes = Integer.parseInt(m.group(6));
+			}
+			if ((m.group(7) == null) || (m.group(7).isEmpty()))
+				break;
+			seconds = Integer.parseInt(m.group(7));
+		}
+
+		if (!found)
+		{
+			throw new Exception("Format incorrect");
+		}
+
+
 		Calendar c = new GregorianCalendar();
 		if (years > 0)
 		{
@@ -201,101 +345,6 @@ public class RMUtils {
 			c.add(13, seconds * (future ? 1 : -1));
 		}
 		return c.getTimeInMillis();
-		 */
-		return 0;
-	}
-
-	public static class Period{
-
-		public int mins;
-
-		public Period(int mins){
-			this.mins = mins;
-		}
-
-		public static Period valueOf(String str) throws Exception {
-			Pattern timePattern = Pattern.compile("(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?(?:([0-9]+)\\s*w[a-z]*[,\\s]*)?(?:([0-9]+)\\s*d[a-z]*[,\\s]*)?(?:([0-9]+)\\s*h[a-z]*[,\\s]*)?(?:([0-9]+)\\s*m[a-z]*[,\\s]*)?(?:([0-9]+)\\s*(?:s[a-z]*)?)?", 2);
-
-			Matcher m = timePattern.matcher(str);
-			int years = 0;
-			int months = 0;
-			int weeks = 0;
-			int days = 0;
-			int hours = 0;
-			int minutes = 0;
-			int seconds = 0;
-			boolean found = false;
-			while (m.find())
-			{
-				if ((m.group() == null) || (m.group().isEmpty()))
-				{
-					continue;
-				}
-				for (int i = 0; i < m.groupCount(); i++)
-				{
-					if ((m.group(i) == null) || (m.group(i).isEmpty()))
-						continue;
-					found = true;
-					break;
-				}
-
-				if (!found)
-					continue;
-				if ((m.group(1) != null) && (!m.group(1).isEmpty()))
-				{
-					years = Integer.parseInt(m.group(1));
-				}
-				if ((m.group(2) != null) && (!m.group(2).isEmpty()))
-				{
-					months = Integer.parseInt(m.group(2));
-				}
-				if ((m.group(3) != null) && (!m.group(3).isEmpty()))
-				{
-					weeks = Integer.parseInt(m.group(3));
-				}
-				if ((m.group(4) != null) && (!m.group(4).isEmpty()))
-				{
-					days = Integer.parseInt(m.group(4));
-				}
-				if ((m.group(5) != null) && (!m.group(5).isEmpty()))
-				{
-					hours = Integer.parseInt(m.group(5));
-				}
-				if ((m.group(6) != null) && (!m.group(6).isEmpty()))
-				{
-					minutes = Integer.parseInt(m.group(6));
-				}
-				if ((m.group(7) == null) || (m.group(7).isEmpty()))
-					break;
-				seconds = Integer.parseInt(m.group(7));
-			}
-
-			if (!found)
-			{
-				throw new Exception("Format incorrect");
-			}
-
-			if(seconds > 0){
-				throw new Exception("Secondes interdites");
-			}
-			
-			if(years > 0){
-				throw new Exception("Années interdites");
-			}			
-			
-			if(months > 0){
-				throw new Exception("Mois interdits");
-			}
-
-			int nbMinutes = (weeks*7+days)*24*60+hours*60+minutes;
-			
-			if(nbMinutes < 5){
-				throw new Exception("Durée inférieure à 5 minutes");
-			}
-			
-			return new Period(nbMinutes);
-		}
-
 
 
 	}

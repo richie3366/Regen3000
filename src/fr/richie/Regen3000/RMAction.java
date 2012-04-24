@@ -15,8 +15,6 @@ import com.sk89q.worldedit.regions.Region;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-import fr.richie.Regen3000.RMUtils.Period;
-
 public class RMAction {
 	
 	public RMPlugin plugin;
@@ -53,11 +51,11 @@ public class RMAction {
 
 	public boolean bcast = false;
 
-	public Period per;
+	public String period;
 	
 	public RMAction(RMPlugin plugin, ProtectedRegion region, Region weRegion, Player player,
 			World wsource, BlockVector2D chunkMin, BlockVector2D chunkMax,
-			BlockVector minPoint, BlockVector maxPoint, Material wallBlockMaterial, Period per, int ydiff, boolean nolava, boolean bcast) {
+			BlockVector minPoint, BlockVector maxPoint, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
 		this.plugin = plugin;
 		this.region = region;
 		this.player = player;
@@ -72,7 +70,7 @@ public class RMAction {
 		this.weRegion = weRegion;
 		this.bcast  = bcast;
 		
-		this.per = per;
+		this.period = period;
 		
 		this.wallBlockMaterial = wallBlockMaterial;
 		
