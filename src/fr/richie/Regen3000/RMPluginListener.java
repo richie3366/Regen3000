@@ -33,6 +33,9 @@ public class RMPluginListener implements Listener{
 			System.out.println("[Regen3000] Hooked with WE/WG ! Plugin activated.");
 			
 			pm.registerEvents(new RMListener(plugin), plugin);
+			
+			plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new RMPlugin.CronRunnable(plugin), 60*20L, 60*20L);
+			
 			plugin.hooked = true;
 		}
 		

@@ -7,8 +7,10 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -17,12 +19,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
+import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
@@ -242,7 +245,6 @@ public class RMPlugin extends JavaPlugin{
 					
 					String period = null;
 					Long periodInMinutes = null;
-					// TODO : faire le cron min-by-min
 					
 					if(arg_period != null){
 						
@@ -264,7 +266,7 @@ public class RMPlugin extends JavaPlugin{
 					RegionLoader loadedRegion = null;
 					
 					try{
-						loadedRegion = RegionLoader.loadRegion(this, p, args[1]);
+						loadedRegion = RegionLoader.loadRegion(this, p, p.getWorld(), args[1]);
 					}catch(Exception ex){
 						p.sendMessage(ChatColor.RED + "Erreur : "+ex.getMessage());
 					}
@@ -276,9 +278,9 @@ public class RMPlugin extends JavaPlugin{
 					}
 
 
-					RMAction action = new RMAction(this, loadedRegion.WGregion, loadedRegion.regionContainer, p, p.getWorld(), loadedRegion.chunkMin, loadedRegion.chunkMax, loadedRegion.realMinPoint, loadedRegion.realMaxPoint, wallBlockMaterial, period, ydiff, nolava, bcast);
+					RMAction action = new RMAction(this, loadedRegion, p, p.getWorld(), wallBlockMaterial, period, ydiff, nolava, bcast);
 					
-					action.sendRecap(loadedRegion, cmd);
+					action.sendRecap(cmd);
 					
 					return true;
 				}
@@ -310,22 +312,9 @@ public class RMPlugin extends JavaPlugin{
 					}
 					*/
 					
-					Material wallBlockMaterial = Material.getMaterial(getHistoryFile().getInt(historyNode+".wallID", defaultWallBlockMaterial.getId()));
-					String period = getHistoryFile().getString(historyNode+".period");
-					int ydiff =  getHistoryFile().getInt(historyNode+".ydiff", 0);
-					boolean nolava = getHistoryFile().getBoolean(historyNode+".nolava", defaultNoLava);
-					boolean bcast = getHistoryFile().getBoolean(historyNode+".bcast", defaultBroadcast);
-					
-					RegionLoader loadedRegion = null;
-					try{
-						loadedRegion = RegionLoader.loadRegion(this, p, args[1]);
-					}catch(Exception ex){
-						p.sendMessage(ChatColor.RED + "Erreur : "+ex.getMessage());
-					}
-					
-					RMAction action = new RMAction(this, loadedRegion.WGregion, loadedRegion.regionContainer, p, p.getWorld(), loadedRegion.chunkMin, loadedRegion.chunkMax, loadedRegion.realMinPoint, loadedRegion.realMaxPoint, wallBlockMaterial, period, ydiff, nolava, bcast);
-					
-					action.sendRecap(loadedRegion, cmd);
+					RMAction action = redoAction(historyNode, p, p.getWorld(), args[1]);
+
+					action.sendRecap(cmd);
 					
 				}
 				
@@ -381,10 +370,35 @@ public class RMPlugin extends JavaPlugin{
 			}
 			
 		}else{
-			sender.sendMessage("Regen3000 ne peut être utilisé que par un joueur, pour des raisons pratiques.");
+			sender.sendMessage("Regen3000 ne peut être utilisé que par un joueur, vu que les régions sont propres au monde du joueur.");
 		}
 		
 		return false;
+	}
+
+	private RMAction redoAction(String historyNode, Player p, World world, String regionName) {
+		
+		Material wallBlockMaterial = Material.getMaterial(getHistoryFile().getInt(historyNode+".wallID", defaultWallBlockMaterial.getId()));
+		String period = getHistoryFile().getString(historyNode+".period");
+		int ydiff =  getHistoryFile().getInt(historyNode+".ydiff", 0);
+		boolean nolava = getHistoryFile().getBoolean(historyNode+".nolava", defaultNoLava);
+		boolean bcast = getHistoryFile().getBoolean(historyNode+".bcast", defaultBroadcast);
+		
+		if(p == null) bcast = true;
+		
+		RegionLoader loadedRegion = null;
+		try{
+			loadedRegion = RegionLoader.loadRegion(this, p, p.getWorld(), regionName);
+		}catch(Exception ex){
+			if(p != null)
+				p.sendMessage(ChatColor.RED + "Erreur : "+ex.getMessage());
+			else
+				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[GRAVE][Regen3000] Erreur lors du régen auto de la mine '"+regionName+"' : "+ex.getMessage());
+		}
+		
+		RMAction action = new RMAction(this, loadedRegion, p, p.getWorld(), wallBlockMaterial, period, ydiff, nolava, bcast);
+		
+		return action;
 	}
 
 	private void sendMainCommand(Player p, String cmd) {
@@ -427,37 +441,39 @@ public class RMPlugin extends JavaPlugin{
 			
 		}
 		
-		static RegionLoader loadRegion(RMPlugin plugin, Player p, String regionParam) throws Exception{
-			ProtectedRegion region = plugin.worldGuard.getRegionManager(p.getWorld()).getRegion(regionParam);
+		static RegionLoader loadRegion(RMPlugin plugin, Player p, World w, String regionParam) throws Exception{
+			ProtectedRegion region = plugin.worldGuard.getRegionManager(w).getRegion(regionParam);
 
 			if(region == null){
 				throw new Exception("Nom de région invalide !");
 			}
 
-
+			Selection selection;
+			
 			if ((region instanceof ProtectedCuboidRegion)) {
 				ProtectedCuboidRegion cuboid = (ProtectedCuboidRegion)region;
 				Vector pt1 = cuboid.getMinimumPoint();
 				Vector pt2 = cuboid.getMaximumPoint();
-				CuboidSelection selection = new CuboidSelection(p.getWorld(), pt1, pt2);
-				plugin.worldEdit.setSelection(p, selection);
+				selection = new CuboidSelection(w, pt1, pt2);
+				if(p != null) plugin.worldEdit.setSelection(p, selection);
 			} else if ((region instanceof ProtectedPolygonalRegion)) {
 				ProtectedPolygonalRegion poly2d = (ProtectedPolygonalRegion)region;
-				Polygonal2DSelection selection = new Polygonal2DSelection(p.getWorld(), poly2d.getPoints(), poly2d.getMinimumPoint().getBlockY(), poly2d.getMaximumPoint().getBlockY());
+				selection = new Polygonal2DSelection(w, poly2d.getPoints(), poly2d.getMinimumPoint().getBlockY(), poly2d.getMaximumPoint().getBlockY());
 
-				plugin.worldEdit.setSelection(p, selection);
+				if(p != null) plugin.worldEdit.setSelection(p, selection);
 			} else {
 
 				throw new Exception("Région invalide à cause de sa forme... Seuls les cuboids et poly sont supportés.");
 
 			}
-
-			LocalSession sess = plugin.worldEdit.getSession(p);
-
+			
 			Region regionContainer = null;
-
+			
 			try {
-				regionContainer = sess.getSelection(sess.getSelectionWorld());
+				
+				RegionSelector rs = selection.getRegionSelector();				
+				regionContainer = rs.getRegion();
+				
 			} catch (IncompleteRegionException e1) {
 				throw new Exception("Erreur 'impossible' numéro 1.");
 			}
@@ -492,6 +508,69 @@ public class RMPlugin extends JavaPlugin{
 			BlockVector2D chunkMax = new BlockVector2D(xMax >> 4, zMax >> 4);
 			
 			return new RegionLoader(region, regionContainer, chunkMin, chunkMax, realMinPoint, realMaxPoint);
+		}
+		
+	}
+	
+	public static class CronRunnable implements Runnable{
+
+		private RMPlugin plugin;
+		private FileConfiguration h;
+
+
+		public CronRunnable(RMPlugin plugin){
+			this.plugin = plugin;
+			this.h = plugin.getHistoryFile();
+		}
+		
+		
+		@Override
+		public void run() {
+			
+			long thisTime = System.currentTimeMillis();
+			
+			ConfigurationSection cs = h.getConfigurationSection("regens");
+			
+			for(String world : cs.getKeys(false)){
+				
+				ConfigurationSection cs2 = h.getConfigurationSection("regens."+world);
+				
+				for(String rName : cs2.getKeys(false)){
+					
+					String node = "regens."+world+"."+rName;
+					
+					long nextRegen = h.getLong(node+".nextRegen", -1);
+					boolean finished = h.getBoolean(node+".finished", false);
+					
+					if(nextRegen != -1 && nextRegen < thisTime && finished){
+						if(Bukkit.getWorld(world) != null){
+							final RMAction action = plugin.redoAction(node, null, Bukkit.getWorld(world), rName);
+							
+							Bukkit.broadcastMessage(ChatColor.AQUA+"[Regen3000] Régénération auto de la mine '"+rName+"' initialisée...");
+							
+							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+
+								@Override
+								public void run() {
+									action.init();
+								}});
+							
+						}
+						
+					}else if(nextRegen != -1 && nextRegen <= (thisTime+5*60*1000) && finished){
+						
+						 double remainingTime = (thisTime+5*60*1000) - nextRegen;
+						 
+						 long nbMin = Math.round(Math.ceil(remainingTime/60D));
+						 
+						 Bukkit.broadcastMessage(ChatColor.GOLD + "[Regen3000] Régen auto de la mine '"+rName+"' dans "+nbMin+" minute"+(nbMin>1 ? "s" : "")+" ! Quittez la zone avant qu'il ne soit trop tard !");
+						 
+					}
+					
+				}
+				
+			}
+			
 		}
 		
 	}

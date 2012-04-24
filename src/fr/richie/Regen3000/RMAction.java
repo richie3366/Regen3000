@@ -56,22 +56,26 @@ public class RMAction {
 	public String period;
 
 	private String historyNode;
+
+	private long nextRegen = -1;
+
+	private RegionLoader loadedRegion;
 	
-	public RMAction(RMPlugin plugin, ProtectedRegion region, Region weRegion, Player player,
-			World wsource, BlockVector2D chunkMin, BlockVector2D chunkMax,
-			BlockVector minPoint, BlockVector maxPoint, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
+	public RMAction(RMPlugin plugin, RegionLoader loadedRegion, Player player,
+			World wsource, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
 		this.plugin = plugin;
-		this.region = region;
+		this.region = loadedRegion.WGregion;
+		this.loadedRegion = loadedRegion;
 		this.player = player;
 		this.wsource = wsource;
 		this.wdest = player.getWorld();
-		this.chunkMin = chunkMin;
-		this.chunkMax = chunkMax;
-		this.minPoint = minPoint;
-		this.maxPoint = maxPoint;
+		this.chunkMin = loadedRegion.chunkMin;
+		this.chunkMax = loadedRegion.chunkMax;
+		this.minPoint = loadedRegion.realMinPoint;
+		this.maxPoint = loadedRegion.realMaxPoint;
 		this.ydiff = ydiff;
 		this.nolava  = nolava;
-		this.weRegion = weRegion;
+		this.weRegion = loadedRegion.regionContainer;
 		this.bcast  = bcast;
 		
 		this.period = period;
@@ -83,12 +87,21 @@ public class RMAction {
 		plugin.actionList.put(player.getName(), this);
 		
 	}
-
-
+	
+	
+	
 	public void init() {
 		
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
+		
+		if(period != null){
+			try {
+				this.nextRegen = RMUtils.getFutureTime(period);
+			} catch (Exception e) {
+				this.nextRegen = -1;
+			}
+		}
 		
 		historyNode = "regens."+wsource.getName()+"."+region.getId();
 		
@@ -121,6 +134,7 @@ public class RMAction {
 
 		plugin.getHistoryFile().set(historyNode+".playerName", player.getName());
 		plugin.getHistoryFile().set(historyNode+".period", period);
+		plugin.getHistoryFile().set(historyNode+".nextRegen", nextRegen);
 		plugin.getHistoryFile().set(historyNode+".wallID", wallBlockMaterial.getId());
 		plugin.getHistoryFile().set(historyNode+".ydiff", ydiff);
 		plugin.getHistoryFile().set(historyNode+".nolava", nolava);
@@ -199,7 +213,7 @@ public class RMAction {
 	}
 
 
-	public void sendRecap(RegionLoader loadedRegion, String cmd) {
+	public void sendRecap(String cmd) {
 		String complement = "sans mettre de murs autour.";
 		
 		if(wallBlockMaterial.getId()>0)
