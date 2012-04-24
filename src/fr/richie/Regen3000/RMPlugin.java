@@ -38,7 +38,6 @@ public class RMPlugin extends JavaPlugin{
 	
 	public WorldEditPlugin worldEdit;
 	public WorldGuardPlugin worldGuard;
-	//public PermissionManager pManager;
 	
 	public HashMap<String, RMAction> actionList = new HashMap<String, RMAction>();
 
@@ -286,7 +285,22 @@ public class RMPlugin extends JavaPlugin{
 					
 					return true;
 				}
-			
+
+				if(args[0].toLowerCase().startsWith("res")){
+					
+					String historyNode = "regens."+p.getWorld().getName()+"."+args[1];
+					
+					if(!getHistoryFile().isSet(historyNode)){
+						p.sendMessage(ChatColor.RED + "Cette mine n'a jamais été régénérée !");
+						return true;
+					}
+					
+					getHistoryFile().set(historyNode+".nextRegen", -1);
+					getHistoryFile().set(historyNode+".period", null);
+					
+					p.sendMessage(ChatColor.GREEN + "Le regen auto a été désactivé pour la mine '"+args[1]+"'");
+					
+				}
 				if(args[0].toLowerCase().startsWith("redo")){
 					
 					if(this.actionList.containsKey(p.getName())){
@@ -411,9 +425,9 @@ public class RMPlugin extends JavaPlugin{
 
 	private void sendCommands(Player p, String cmd) {
 		sendMainCommand(p, cmd);
-		p.sendMessage(ChatColor.RED + cmd + " unschedule <region_name> [PAS ENCORE DISPO!]");
-		p.sendMessage(ChatColor.RED + cmd + " start");
-		p.sendMessage(ChatColor.RED + cmd + " cancel");
+		p.sendMessage(ChatColor.RED + cmd + " reset <region_name> {permet d'annuler un regen périodique}");
+		p.sendMessage(ChatColor.RED + cmd + " start {démarre la dernière commande de regen}");
+		p.sendMessage(ChatColor.RED + cmd + " cancel {annule la dernière commande de regen}");
 	}
 	
 	
