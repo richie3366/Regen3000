@@ -285,12 +285,30 @@ public class RMPlugin extends JavaPlugin{
 			
 				if(args[0].toLowerCase().startsWith("redo")){
 					
+					if(this.actionList.containsKey(p.getName())){
+						p.sendMessage(ChatColor.RED + "Vous avez déjà entré une commande de regen.");
+						p.sendMessage(ChatColor.RED + "Pour annuler le précédent regen : "+cmd+" cancel");
+						return true;
+					}
+					
+					if(args.length < 2){
+						p.sendMessage(ChatColor.RED + cmd + " redo <region_name>");
+						return true;
+					}
+					
 					String historyNode = "regens."+p.getWorld().getName()+"."+args[1];
 					
 					if(!getHistoryFile().isSet(historyNode)){
 						p.sendMessage(ChatColor.RED + "Cette mine n'a jamais été régénérée !");
 						return true;
 					}
+					
+					/* Hésitation d'empêcher un redo si last regen pas fini ...
+					if(!getHistoryFile().getBoolean(historyNode+".finished", false)){
+						p.sendMessage(ChatColor.RED + "La dernière régénération ne s'est pas terminée, redo impossible.");
+						return true;
+					}
+					*/
 					
 					Material wallBlockMaterial = Material.getMaterial(getHistoryFile().getInt(historyNode+".wallID", defaultWallBlockMaterial.getId()));
 					String period = getHistoryFile().getString(historyNode+".period");
