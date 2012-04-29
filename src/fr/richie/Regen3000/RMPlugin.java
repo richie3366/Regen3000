@@ -552,6 +552,8 @@ public class RMPlugin extends JavaPlugin{
 			
 			ConfigurationSection cs = h.getConfigurationSection("regens");
 			
+			if(cs == null) return;
+			
 			for(String world : cs.getKeys(false)){
 				
 				ConfigurationSection cs2 = h.getConfigurationSection("regens."+world);
