@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import net.minecraft.server.ConvertProgressUpdater;
 import net.minecraft.server.Convertable;
 import net.minecraft.server.EntityTracker;
+import net.minecraft.server.EnumGamemode;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerNBTManager;
 import net.minecraft.server.WorldLoaderServer;
@@ -75,15 +76,19 @@ public class RMUtils {
 		while (used);
 		boolean hardcore = false;
 
-		WorldServer internal = new WorldServer(console, new ServerNBTManager(cs.getWorldContainer(), name, true), name, dimension, new WorldSettings(creator.seed(), cs.getDefaultGameMode().getValue(), generateStructures, hardcore, type), creator.environment(), generator);
+		WorldServer internal = new WorldServer(console, new ServerNBTManager(cs.getWorldContainer(), name, true), name, dimension, new WorldSettings(creator.seed(), EnumGamemode.a(cs.getDefaultGameMode().getValue()), generateStructures, hardcore, type), console.methodProfiler, creator.environment(), generator);
 
+		//cs.getHandle().getServer().getServer()
+		
+		//cs.getW
+		
 		if (cs.getWorld(name.toLowerCase())==null) {
 			return null;
 		}
 
 		internal.worldMaps = ((WorldServer)console.worlds.get(0)).worldMaps;
 
-		internal.tracker = new EntityTracker(console, internal);
+		internal.tracker = new EntityTracker(internal);
 		internal.addIWorldAccess(new WorldManager(console, internal));
 		internal.difficulty = 1;
 		internal.setSpawnFlags(true, true);
