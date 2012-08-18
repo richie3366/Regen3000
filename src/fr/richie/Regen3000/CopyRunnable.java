@@ -15,7 +15,7 @@ public class CopyRunnable implements Runnable{
 
 	private RMAction a;
 	
-	int toCopy = 1;
+	int toCopy = 0;
 	int nbCopied = 0;
 	int lastPercent = -100;
 	private long startTime = 0;
@@ -29,13 +29,14 @@ public class CopyRunnable implements Runnable{
 	public CopyRunnable(RMAction a){
 		this.a = a;
 		
-		toCopy = a.weRegion.getArea();
+		//toCopy = a.weRegion.getArea();
 		
 		
 		int nbCurrent = 0;
 		List<BlockVector> tmpList = new ArrayList<BlockVector>();
 		
 		for(BlockVector bv : a.weRegion){
+			toCopy++;
 			
 			tmpList.add(bv);
 			nbCurrent++;
