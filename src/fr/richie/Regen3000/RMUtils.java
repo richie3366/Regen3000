@@ -28,7 +28,7 @@ import org.bukkit.generator.ChunkGenerator;
 
 
 public class RMUtils {
-	static World createWorld(String wName){
+	static World createWorld(String wName, boolean forceemerald){
 
 		WorldCreator creator = WorldCreator.name(wName.toLowerCase()).environment(Environment.NORMAL).seed(new Random().nextLong()).generateStructures(false);
 
@@ -86,6 +86,10 @@ public class RMUtils {
 			return null;
 		}
 
+		if(forceemerald){
+			internal.worldProvider.c = new RMWorldChunkManager(internal);
+		}
+		
 		internal.worldMaps = ((WorldServer)console.worlds.get(0)).worldMaps;
 
 		internal.tracker = new EntityTracker(internal);

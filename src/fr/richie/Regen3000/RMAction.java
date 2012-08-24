@@ -49,6 +49,7 @@ public class RMAction {
 
 	public boolean nolava = false;
 	public boolean bcast = false;
+	public boolean forceemerald = false;
 
 	public String period;
 
@@ -59,7 +60,7 @@ public class RMAction {
 	private RegionLoader loadedRegion;
 	
 	public RMAction(RMPlugin plugin, RegionLoader loadedRegion, Player player,
-			World wdest, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast) {
+			World wdest, Material wallBlockMaterial, String period, int ydiff, boolean nolava, boolean bcast, boolean forceemerald) {
 		this.plugin = plugin;
 		this.region = loadedRegion.WGregion;
 		this.loadedRegion = loadedRegion;
@@ -72,6 +73,7 @@ public class RMAction {
 		this.maxPoint = loadedRegion.realMaxPoint;
 		this.ydiff = ydiff;
 		this.nolava  = nolava;
+		this.forceemerald = forceemerald;
 		this.weRegion = loadedRegion.regionContainer;
 		this.bcast  = bcast;
 		
@@ -112,7 +114,7 @@ public class RMAction {
 		
 		sendMessage(ChatColor.GRAY+"Création du monde source ...");
 
-		wsource = RMUtils.createWorld(wToCreate);
+		wsource = RMUtils.createWorld(wToCreate, this.forceemerald);
 
 		if(wsource == null){
 			sendMessage(ChatColor.RED + "Erreur : monde non créé.");
@@ -134,6 +136,7 @@ public class RMAction {
 		plugin.getHistoryFile().set(historyNode+".wallID", wallBlockMaterial.getId());
 		plugin.getHistoryFile().set(historyNode+".ydiff", ydiff);
 		plugin.getHistoryFile().set(historyNode+".nolava", nolava);
+		plugin.getHistoryFile().set(historyNode+".forceemerald", forceemerald);
 		plugin.getHistoryFile().set(historyNode+".bcast", bcast);
 		plugin.getHistoryFile().set(historyNode+".started", started);
 		plugin.getHistoryFile().set(historyNode+".startedTime", startTime);

@@ -152,6 +152,7 @@ public class RMPlugin extends JavaPlugin{
 					String arg_nolava = null;
 					String arg_bcast = null;
 					String arg_period = null;
+					String arg_forceemerald = null;
 					
 					for(int i = 2; i < args.length; i++){
 						
@@ -167,6 +168,8 @@ public class RMPlugin extends JavaPlugin{
 								arg_ydiff = split[1];
 							}else if(argname.equals("nolava")){
 								arg_nolava = split[1];
+							}else if(argname.equals("forceemerald")){
+								arg_forceemerald = split[1];
 							}else if(argname.startsWith("period")){
 								arg_period = split[1];
 							}else if(argname.endsWith("cast") || argname.equals("bc")){
@@ -229,6 +232,18 @@ public class RMPlugin extends JavaPlugin{
 						}
 					}
 					
+					boolean forceemerald = false;
+					
+					if(arg_forceemerald != null){
+						try{
+							forceemerald = Boolean.valueOf(arg_forceemerald.replace("on", "true").replace("off", "false"));
+						}catch(Exception ex){
+							
+							p.sendMessage(ChatColor.RED + "Valeur Force-Emerald incorrecte !");
+							return true;
+						}
+					}
+					
 					
 					boolean bcast = this.defaultBroadcast;
 					
@@ -279,7 +294,7 @@ public class RMPlugin extends JavaPlugin{
 					}
 
 
-					RMAction action = new RMAction(this, loadedRegion, p, p.getWorld(), wallBlockMaterial, period, ydiff, nolava, bcast);
+					RMAction action = new RMAction(this, loadedRegion, p, p.getWorld(), wallBlockMaterial, period, ydiff, nolava, bcast, forceemerald);
 					
 					action.sendRecap(cmd);
 					
@@ -403,6 +418,7 @@ public class RMPlugin extends JavaPlugin{
 		int ydiff =  getHistoryFile().getInt(historyNode+".ydiff", 0);
 		boolean nolava = getHistoryFile().getBoolean(historyNode+".nolava", defaultNoLava);
 		boolean bcast = getHistoryFile().getBoolean(historyNode+".bcast", defaultBroadcast);
+		boolean forceemerald = getHistoryFile().getBoolean(historyNode+".forceemerald", false);
 		
 		if(p == null) bcast = true;
 		
@@ -416,7 +432,7 @@ public class RMPlugin extends JavaPlugin{
 				Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[GRAVE][Regen3000] Erreur lors du régen auto de la mine '"+regionName+"' : "+ex.getMessage());
 		}
 		
-		RMAction action = new RMAction(this, loadedRegion, p, world, wallBlockMaterial, period, ydiff, nolava, bcast);
+		RMAction action = new RMAction(this, loadedRegion, p, world, wallBlockMaterial, period, ydiff, nolava, bcast, forceemerald);
 		
 		return action;
 	}
