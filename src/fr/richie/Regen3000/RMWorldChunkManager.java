@@ -13,6 +13,7 @@ import net.minecraft.server.World;
 import net.minecraft.server.WorldChunkManager;
 import net.minecraft.server.WorldType;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class RMWorldChunkManager extends WorldChunkManager{
 
 
