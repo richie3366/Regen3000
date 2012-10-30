@@ -219,7 +219,7 @@ public class RMAction {
 		if(wallBlockMaterial.getId()>0)
 			complement = "en mettant un mur de "+wallBlockMaterial.toString()+" autour.";
 		
-		player.sendMessage(ChatColor.GOLD + "Vous avez l'intention de regénérer la mine contenue par la region WG '"+loadedRegion.WGregion.getId()+"', d'une taille de "+(loadedRegion.sizeX)+"x"+(loadedRegion.sizeY)+"x"+(loadedRegion.sizeZ)+" [yDiff="+ydiff+", no-lava="+nolava+", broadcast="+bcast+"], "+complement);
+		player.sendMessage(ChatColor.GOLD + "Vous avez l'intention de regénérer la mine contenue par la region WG '"+loadedRegion.WGregion.getId()+"', d'une taille de "+(loadedRegion.sizeX)+"x"+(loadedRegion.sizeY)+"x"+(loadedRegion.sizeZ)+" [yDiff="+ydiff+", no-lava="+nolava+", broadcast="+bcast+", force-emerald="+forceemerald+"], "+complement);
 		player.sendMessage(ChatColor.AQUA + "Pour lancer le regen, entrez la commande '"+ChatColor.YELLOW+cmd+" start"+ChatColor.AQUA+"'.");
 		
 	}

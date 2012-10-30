@@ -87,7 +87,7 @@ public class RMUtils {
 		}
 
 		if(forceemerald){
-			internal.worldProvider.c = new RMWorldChunkManager(internal);
+			internal.worldProvider.d = new RMWorldChunkManager(internal);
 		}
 		
 		internal.worldMaps = ((WorldServer)console.worlds.get(0)).worldMaps;

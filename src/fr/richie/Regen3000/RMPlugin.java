@@ -438,7 +438,7 @@ public class RMPlugin extends JavaPlugin{
 	}
 
 	private void sendMainCommand(Player p, String cmd) {
-		p.sendMessage(ChatColor.RED + cmd + " regen <region_name> [wall_ID:"+this.defaultWallBlockMaterial.getId()+"] [y-diff:0] [no-lava:"+this.defaultNoLava+"] [broadcast:"+this.defaultBroadcast+"] [period:1w3d10h40m]");
+		p.sendMessage(ChatColor.RED + cmd + " regen <region_name> [wall_ID:"+this.defaultWallBlockMaterial.getId()+"] [y-diff:0] [no-lava:"+this.defaultNoLava+"] [broadcast:"+this.defaultBroadcast+"] [force-emerald:false] [period:1w3d10h40m]");
 	}
 
 
