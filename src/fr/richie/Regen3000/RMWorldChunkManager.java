@@ -1,20 +1,14 @@
 package fr.richie.Regen3000;
 
+import net.minecraft.server.v1_4_6.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.server.BiomeBase;
-import net.minecraft.server.BiomeCache;
-import net.minecraft.server.ChunkPosition;
-import net.minecraft.server.GenLayer;
-import net.minecraft.server.IntCache;
-import net.minecraft.server.World;
-import net.minecraft.server.WorldChunkManager;
-import net.minecraft.server.WorldType;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class RMWorldChunkManager extends WorldChunkManager{
+@SuppressWarnings({"rawtypes", "unchecked"})
+public class RMWorldChunkManager extends WorldChunkManager {
 
 
 	/*
@@ -29,18 +23,15 @@ public class RMWorldChunkManager extends WorldChunkManager{
 	 *  it without trying other tricks :P
 	 * 
 	 */
-	
-	
 
+
+	BiomeBase[] biomes = new BiomeBase[256];
 	private GenLayer d;
 	private GenLayer e;
 	private BiomeCache f = new BiomeCache(this);
 	private List g;
 
-	BiomeBase[] biomes = new BiomeBase[256];
-
-	protected RMWorldChunkManager()
-	{
+	protected RMWorldChunkManager() {
 		this.g = new ArrayList();
 		this.g.add(BiomeBase.FOREST);
 		this.g.add(BiomeBase.PLAINS);
@@ -51,7 +42,7 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		this.g.add(BiomeBase.JUNGLE_HILLS);
 
 
-		for(int i=0; i < 256; i++){
+		for (int i = 0; i < 256; i++) {
 			biomes[i] = BiomeBase.EXTREME_HILLS;
 		}
 
@@ -69,18 +60,15 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		this(paramWorld.getSeed(), paramWorld.getWorldData().getType());
 	}
 
-	public List a()
-	{
+	public List a() {
 		return this.g;
 	}
 
-	public BiomeBase getBiome(int paramInt1, int paramInt2)
-	{
+	public BiomeBase getBiome(int paramInt1, int paramInt2) {
 		return BiomeBase.EXTREME_HILLS;
 	}
 
-	public float[] getWetness(float[] paramArrayOfFloat, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
-	{
+	public float[] getWetness(float[] paramArrayOfFloat, int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
 		IntCache.a();
 		if ((paramArrayOfFloat == null) || (paramArrayOfFloat.length < paramInt3 * paramInt4)) {
 			paramArrayOfFloat = new float[paramInt3 * paramInt4];
@@ -96,8 +84,7 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		return paramArrayOfFloat;
 	}
 
-	public float[] getTemperatures(float[] paramArrayOfFloat, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
-	{
+	public float[] getTemperatures(float[] paramArrayOfFloat, int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
 		IntCache.a();
 		if ((paramArrayOfFloat == null) || (paramArrayOfFloat.length < paramInt3 * paramInt4)) {
 			paramArrayOfFloat = new float[paramInt3 * paramInt4];
@@ -113,13 +100,11 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		return paramArrayOfFloat;
 	}
 
-	public BiomeBase[] getBiomes(BiomeBase[] paramArrayOfBiomeBase, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
-	{
+	public BiomeBase[] getBiomes(BiomeBase[] paramArrayOfBiomeBase, int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
 		return biomes;
 	}
 
-	public BiomeBase[] getBiomeBlock(BiomeBase[] paramArrayOfBiomeBase, int paramInt1, int paramInt2, int paramInt3, int paramInt4)
-	{
+	public BiomeBase[] getBiomeBlock(BiomeBase[] paramArrayOfBiomeBase, int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
 		return biomes;
 	}
 
@@ -127,8 +112,7 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		return biomes;
 	}
 
-	public boolean a(int paramInt1, int paramInt2, int paramInt3, List paramList)
-	{
+	public boolean a(int paramInt1, int paramInt2, int paramInt3, List paramList) {
 		int i = paramInt1 - paramInt3 >> 2;
 		int j = paramInt2 - paramInt3 >> 2;
 		int k = paramInt1 + paramInt3 >> 2;
@@ -146,8 +130,7 @@ public class RMWorldChunkManager extends WorldChunkManager{
 		return true;
 	}
 
-	public ChunkPosition a(int paramInt1, int paramInt2, int paramInt3, List paramList, Random paramRandom)
-	{
+	public ChunkPosition a(int paramInt1, int paramInt2, int paramInt3, List paramList, Random paramRandom) {
 		int i = paramInt1 - paramInt3 >> 2;
 		int j = paramInt2 - paramInt3 >> 2;
 		int k = paramInt1 + paramInt3 >> 2;
