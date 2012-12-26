@@ -8,22 +8,22 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.minecraft.server.v1_4_5.ConvertProgressUpdater;
-import net.minecraft.server.v1_4_5.Convertable;
-import net.minecraft.server.v1_4_5.EntityTracker;
-import net.minecraft.server.v1_4_5.EnumGamemode;
-import net.minecraft.server.v1_4_5.MinecraftServer;
-import net.minecraft.server.v1_4_5.ServerNBTManager;
-import net.minecraft.server.v1_4_5.WorldLoaderServer;
-import net.minecraft.server.v1_4_5.WorldManager;
-import net.minecraft.server.v1_4_5.WorldServer;
-import net.minecraft.server.v1_4_5.WorldSettings;
+import net.minecraft.server.v1_4_6.ConvertProgressUpdater;
+import net.minecraft.server.v1_4_6.Convertable;
+import net.minecraft.server.v1_4_6.EntityTracker;
+import net.minecraft.server.v1_4_6.EnumGamemode;
+import net.minecraft.server.v1_4_6.MinecraftServer;
+import net.minecraft.server.v1_4_6.ServerNBTManager;
+import net.minecraft.server.v1_4_6.WorldLoaderServer;
+import net.minecraft.server.v1_4_6.WorldManager;
+import net.minecraft.server.v1_4_6.WorldServer;
+import net.minecraft.server.v1_4_6.WorldSettings;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
 import org.bukkit.generator.ChunkGenerator;
 
 
@@ -41,7 +41,7 @@ public class RMUtils {
 		ChunkGenerator generator = creator.generator();
 		File folder = new File(cs.getWorldContainer(), name);
 		World world = cs.getWorld(name);
-		net.minecraft.server.v1_4_5.WorldType type = net.minecraft.server.v1_4_5.WorldType.getType(creator.type().getName());
+		net.minecraft.server.v1_4_6.WorldType type = net.minecraft.server.v1_4_6.WorldType.getType(creator.type().getName());
 		boolean generateStructures = creator.generateStructures();
 
 		if (world != null) {

@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/dependances/WE-WG/WorldEdit_4.6.jar"/>
 	<classpathentry kind="lib" path="/dependances/WE-WG/WorldGuard_5.2.2.jar"/>
-	<classpathentry kind="lib" path="D:/Users/richie3366/Downloads/craftbukkit-1.4.5-R1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Users/richie3366/Downloads/craftbukkit-1.4.6-R0.2-20121224.203527-10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
