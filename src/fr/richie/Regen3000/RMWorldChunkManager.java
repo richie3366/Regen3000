@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.server.BiomeBase;
-import net.minecraft.server.BiomeCache;
-import net.minecraft.server.ChunkPosition;
-import net.minecraft.server.GenLayer;
-import net.minecraft.server.IntCache;
-import net.minecraft.server.World;
-import net.minecraft.server.WorldChunkManager;
-import net.minecraft.server.WorldType;
+import net.minecraft.server.v1_4_5.BiomeBase;
+import net.minecraft.server.v1_4_5.BiomeCache;
+import net.minecraft.server.v1_4_5.ChunkPosition;
+import net.minecraft.server.v1_4_5.GenLayer;
+import net.minecraft.server.v1_4_5.IntCache;
+import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_5.WorldChunkManager;
+import net.minecraft.server.v1_4_5.WorldType;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class RMWorldChunkManager extends WorldChunkManager{

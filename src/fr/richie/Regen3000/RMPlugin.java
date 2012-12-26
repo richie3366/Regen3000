@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.BukkitMetrics;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
@@ -55,6 +56,14 @@ public class RMPlugin extends JavaPlugin{
 		initHistoryFile();
 		
 		Bukkit.getPluginManager().registerEvents(new RMPluginListener(this), this);
+		
+		
+		try {
+		    BukkitMetrics metrics = new BukkitMetrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
 		
 	}
 	
