@@ -22,6 +22,7 @@ public class RMPluginListener implements Listener{
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPluginEnable(PluginEnableEvent e){
 		

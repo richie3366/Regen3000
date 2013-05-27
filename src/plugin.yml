@@ -1,7 +1,7 @@
 name: Regen3000
 main: fr.richie.Regen3000.RMPlugin
 author: richie3366
-version: 1.4.7.0
+version: 1.5.2.0
 commands:
   regen3000:
     description: Regen3000 main command.
